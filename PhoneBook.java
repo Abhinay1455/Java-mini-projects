@@ -1,100 +1,89 @@
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-class Contact {
-    private String name;
-    private String phoneNumber;
-    public Contact(String name, String phoneNumber) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "Name: " + name + ", Phone Number: " + phoneNumber;
-    }
-}
-
 public class PhoneBook {
-    private ArrayList<Contact> contacts;
 
-    public PhoneBook() {
-        contacts = new ArrayList<>();
-    }
-
-    public void addContact(String name, String phoneNumber) {
-        contacts.add(new Contact(name, phoneNumber));
-        System.out.println("Contact added: " + name);
-    }
-
-    public void searchContact(String name) {
-        for (Contact contact : contacts) {
-            if (contact.getName().equalsIgnoreCase(name)) {
-                System.out.println("Contact found: " + contact);
-                return;
-            }
-        }
-        System.out.println("Contact not found.");
-    }
-
-    public void displayContacts() {
-        if (contacts.isEmpty()) {
-            System.out.println("No contacts in the phone book.");
-            return;
-        }
-        System.out.println("Contacts in Phone Book:");
-        for (Contact contact : contacts) {
-            System.out.println(contact);
-        }
-    }
+    private static Map<String, String> phoneBook = new HashMap<>();
+    private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        PhoneBook phoneBook = new PhoneBook();
-        Scanner scanner = new Scanner(System.in);
         int choice;
 
         do {
-            System.out.println("\nPhone Book Menu:");
+            System.out.println("\n=== Phone Book Menu ===");
             System.out.println("1. Add Contact");
             System.out.println("2. Search Contact");
-            System.out.println("3. Display Contacts");
-            System.out.println("4. Exit");
+            System.out.println("3. Delete Contact");
+            System.out.println("4. Display All Contacts");
+            System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine(); // consume newline
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter name: ");
-                    String name = scanner.nextLine();
-                    System.out.print("Enter phone number: ");
-                    String phoneNumber = scanner.nextLine();
-                    phoneBook.addContact(name, phoneNumber);
+                    addContact();
                     break;
                 case 2:
-                    System.out.print("Enter name to search: ");
-                    String searchName = scanner.nextLine();
-                    phoneBook.searchContact(searchName);
+                    searchContact();
                     break;
                 case 3:
-                    phoneBook.displayContacts();
+                    deleteContact();
                     break;
                 case 4:
-                    System.out.println("Exiting...");
+                    displayContacts();
+                    break;
+                case 5:
+                    System.out.println("Exiting Phone Book. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 4);
 
-        scanner.close();
+        } while (choice != 5);
+    }
+
+    private static void addContact() {
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter phone number: ");
+        String number = scanner.nextLine();
+
+        phoneBook.put(name, number);
+        System.out.println("Contact added successfully.");
+    }
+
+    private static void searchContact() {
+        System.out.print("Enter name to search: ");
+        String name = scanner.nextLine();
+
+        if (phoneBook.containsKey(name)) {
+            System.out.println(name + "'s number is: " + phoneBook.get(name));
+        } else {
+            System.out.println("Contact not found.");
+        }
+    }
+
+    private static void deleteContact() {
+        System.out.print("Enter name to delete: ");
+        String name = scanner.nextLine();
+
+        if (phoneBook.remove(name) != null) {
+            System.out.println("Contact deleted.");
+        } else {
+            System.out.println("Contact not found.");
+        }
+    }
+
+    private static void displayContacts() {
+        if (phoneBook.isEmpty()) {
+            System.out.println("Phone book is empty.");
+        } else {
+            System.out.println("\nAll Contacts:");
+            for (Map.Entry<String, String> entry : phoneBook.entrySet()) {
+                System.out.println("Name: " + entry.getKey() + " | Number: " + entry.getValue());
+            }
+        }
     }
 }
